@@ -4,6 +4,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -14,7 +15,7 @@ public class HuobiRunnable implements Runnable {
 
     public HuobiRunnable(String url, String tickerSymbol) {
         this.url = url;
-        this.tickerSymbol = tickerSymbol;
+        this.tickerSymbol = tickerSymbol.toLowerCase();
     }
 
     @Override
@@ -46,15 +47,25 @@ public class HuobiRunnable implements Runnable {
 
             for (JsonNode data : dataArray) {
                 String symbol = data.get("symbol").asText();
-                if ("btcusdt".equals(symbol) || "ethusdt".equals(symbol)) {
+                if (tickerSymbol.equals(symbol)) {
                     double bid = data.get("bid").asDouble();
                     double bidSize = data.get("bidSize").asDouble();
                     double ask = data.get("ask").asDouble();
                     double askSize = data.get("askSize").asDouble();
 
                     tickerInfo = new TickerInfo(symbol, bid, bidSize, ask, askSize);
-                    System.out.println(tickerInfo);
+                    System.out.println("huobi -> " + tickerInfo);
+                    break;
                 }
+//                if ("btcusdt".equals(symbol) || "ethusdt".equals(symbol)) {
+//                    double bid = data.get("bid").asDouble();
+//                    double bidSize = data.get("bidSize").asDouble();
+//                    double ask = data.get("ask").asDouble();
+//                    double askSize = data.get("askSize").asDouble();
+//
+//                    tickerInfo = new TickerInfo(symbol, bid, bidSize, ask, askSize);
+//                    System.out.println(tickerInfo);
+//                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -67,7 +78,7 @@ public class HuobiRunnable implements Runnable {
 
     public static void main(String[] args) {
         String url = "https://api.huobi.pro/market/tickers";
-        HuobiRunnable example = new HuobiRunnable(url);
+        HuobiRunnable example = new HuobiRunnable(url, "BTCUSDT");
         Thread thread = new Thread(example);
         thread.start();
     }
