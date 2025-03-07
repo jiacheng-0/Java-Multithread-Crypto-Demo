@@ -10,6 +10,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class BinanceRunnable implements Runnable {
     private final String url;
 
+    private TickerInfo tickerInfo;
+
     public BinanceRunnable(String url) {
         this.url = url;
     }
@@ -35,24 +37,25 @@ public class BinanceRunnable implements Runnable {
                 .join();
     }
 
-    public static void parse(String responseBody) {
+    private void parse(String responseBody) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode node = mapper.readTree(responseBody);
             String symbol = node.get("symbol").asText();
-            String bidPrice = node.get("bidPrice").asText();
-            String bidQty = node.get("bidQty").asText();
-            String askPrice = node.get("askPrice").asText();
-            String askQty = node.get("askQty").asText();
+            double bidPrice = node.get("bidPrice").asDouble();
+            double bidQty = node.get("bidQty").asDouble();
+            double askPrice = node.get("askPrice").asDouble();
+            double askQty = node.get("askQty").asDouble();
 
-            System.out.println("Symbol: " + symbol);
-            System.out.println("Bid Price: " + bidPrice);
-            System.out.println("Bid Quantity: " + bidQty);
-            System.out.println("Ask Price: " + askPrice);
-            System.out.println("Ask Quantity: " + askQty);
+            tickerInfo = new TickerInfo(symbol, bidPrice, bidQty, askPrice, askQty);
+            System.out.println(tickerInfo);
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public TickerInfo getTickerInfo() {
+        return tickerInfo;
     }
 
     public static void main(String[] args) {
