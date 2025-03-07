@@ -16,9 +16,17 @@ public class BinanceApiExample {
                 .uri(URI.create(url))
                 .build();
 
+        long startTime = System.nanoTime();
+
         client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(HttpResponse::body)
-                .thenAccept(BinanceApiExample::parse)
+                .thenAccept(responseBody -> {
+                    long endTime = System.nanoTime();
+                    long duration = endTime - startTime;
+                    double durationInSeconds = duration / 1_000_000_000.0;
+                    System.out.printf("Request-Response Time: %.2f seconds%n", durationInSeconds);
+                    parse(responseBody);
+                })
                 .join();
     }
 
