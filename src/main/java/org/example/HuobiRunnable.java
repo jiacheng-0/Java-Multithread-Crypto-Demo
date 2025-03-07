@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class HuobiRunnable implements Runnable {
     private final String url;
+    private TickerInfo tickerInfo;
 
     public HuobiRunnable(String url) {
         this.url = url;
@@ -35,7 +36,7 @@ public class HuobiRunnable implements Runnable {
                 .join();
     }
 
-    public static void parse(String responseBody) {
+    private void parse(String responseBody) {
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode node = mapper.readTree(responseBody);
@@ -49,13 +50,17 @@ public class HuobiRunnable implements Runnable {
                     double ask = data.get("ask").asDouble();
                     double askSize = data.get("askSize").asDouble();
 
-                    TickerInfo tickerInfo = new TickerInfo(symbol, bid, bidSize, ask, askSize);
+                    tickerInfo = new TickerInfo(symbol, bid, bidSize, ask, askSize);
                     System.out.println(tickerInfo);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public TickerInfo getTickerInfo() {
+        return tickerInfo;
     }
 
     public static void main(String[] args) {
