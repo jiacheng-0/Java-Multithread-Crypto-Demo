@@ -10,9 +10,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class HuobiRunnable implements Runnable {
     private final String url;
     private TickerInfo tickerInfo;
+    private String tickerSymbol;
 
-    public HuobiRunnable(String url) {
+    public HuobiRunnable(String url, String tickerSymbol) {
         this.url = url;
+        this.tickerSymbol = tickerSymbol;
     }
 
     @Override

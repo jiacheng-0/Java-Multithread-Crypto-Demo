@@ -11,9 +11,11 @@ public class BinanceRunnable implements Runnable {
     private final String url;
 
     private TickerInfo tickerInfo;
+    private String tickerSymbol;
 
-    public BinanceRunnable(String url) {
+    public BinanceRunnable(String url, String tickerSymbol) {
         this.url = url;
+        this.tickerSymbol = tickerSymbol;
     }
 
     @Override
