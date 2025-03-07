@@ -11,18 +11,18 @@ public class BinanceRunnable implements Runnable {
     private final String url;
 
     private TickerInfo tickerInfo;
-    private String tickerSymbol;
+    private final String tickerSymbol;
 
     public BinanceRunnable(String url, String tickerSymbol) {
         this.url = url;
-        this.tickerSymbol = tickerSymbol;
+        this.tickerSymbol = tickerSymbol.toUpperCase();
     }
 
     @Override
     public void run() {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
+                .uri(URI.create(url + tickerSymbol))
                 .build();
 
         long startTime = System.nanoTime();
@@ -50,7 +50,7 @@ public class BinanceRunnable implements Runnable {
             double askQty = node.get("askQty").asDouble();
 
             tickerInfo = new TickerInfo(symbol, bidPrice, bidQty, askPrice, askQty);
-            System.out.println(tickerInfo);
+            System.out.println("binance -> " + tickerInfo);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -61,8 +61,9 @@ public class BinanceRunnable implements Runnable {
     }
 
     public static void main(String[] args) {
-        String url = "https://api.binance.com/api/v3/ticker/bookTicker?symbol=BTCUSDT";
-        BinanceRunnable example = new BinanceRunnable(url);
+        String url = "https://api.binance.com/api/v3/ticker/bookTicker?symbol=";
+//        BinanceRunnable example = new BinanceRunnable(url, "BTCUSDT");
+        BinanceRunnable example = new BinanceRunnable(url, "btcUSDT");
         Thread thread = new Thread(example);
         thread.start();
     }
